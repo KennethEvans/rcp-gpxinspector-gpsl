@@ -3,7 +3,12 @@ package net.kenevans.gpxinspector.gpsl.converters;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
@@ -16,6 +21,7 @@ import net.kenevans.gpx.TrkType;
 import net.kenevans.gpx.TrksegType;
 import net.kenevans.gpx.WptType;
 import net.kenevans.gpxinspector.converters.IGpxConverter;
+import net.kenevans.gpxinspector.utils.SWTUtils;
 import net.kenevans.gpxinspector.utils.Utils;
 import net.kenevans.parser.GPXParser;
 
@@ -80,15 +86,14 @@ public class GpslConverter implements IGpxConverter
      */
     @Override
     public boolean isSaveSupported(File file) {
-        // TODO
-        // String fileExt = "." + Utils.getExtension(file);
-        // if(fileExt != null) {
-        // for(String ext : extensions) {
-        // if(fileExt.equalsIgnoreCase(ext)) {
-        // return true;
-        // }
-        // }
-        // }
+        String fileExt = "." + Utils.getExtension(file);
+        if(fileExt != null) {
+            for(String ext : extensions) {
+                if(fileExt.equalsIgnoreCase(ext)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -136,12 +141,12 @@ public class GpslConverter implements IGpxConverter
         line = in.readLine();
         lineNum++;
         if(line == null) {
-            Utils.errMsg("Unexpected end of file at line " + lineNum + ":\n"
+            SWTUtils.errMsg("Unexpected end of file at line " + lineNum + ":\n"
                 + file.getName());
             return null;
         }
         if(!line.equals(GPSLINK_ID)) {
-            Utils.errMsg("Invalid GPSLink file (Bad ID) at line " + lineNum
+            SWTUtils.errMsg("Invalid GPSLink file (Bad ID) at line " + lineNum
                 + ":\n" + file.getName());
             return null;
         }
@@ -150,7 +155,7 @@ public class GpslConverter implements IGpxConverter
         line = in.readLine();
         lineNum++;
         if(line == null) {
-            Utils.errMsg("Unexpected end of file at line " + lineNum + ":\n"
+            SWTUtils.errMsg("Unexpected end of file at line " + lineNum + ":\n"
                 + file.getName());
             return null;
         }
@@ -159,19 +164,19 @@ public class GpslConverter implements IGpxConverter
         line = in.readLine();
         lineNum++;
         if(line == null) {
-            Utils.errMsg("Unexpected end of file at line " + lineNum + ":\n"
+            SWTUtils.errMsg("Unexpected end of file at line " + lineNum + ":\n"
                 + file.getName());
             return null;
         }
         tokens = line.split("=");
         if(tokens.length < 2 || !tokens[0].equals(DELIMITER)) {
-            Utils.warnMsg("No delimiter found at line + lineNum "
+            SWTUtils.warnMsg("No delimiter found at line + lineNum "
                 + ", assuming TAB:\n" + file.getName());
             delimiter = "\t";
         }
         delimiter = tokens[1];
         if(!delimiter.equals(",") && !delimiter.equals("\t")) {
-            Utils.warnMsg("Invalid delimiter found at line + lineNum "
+            SWTUtils.warnMsg("Invalid delimiter found at line + lineNum "
                 + ", assuming TAB:\n" + file.getName());
             delimiter = "\t";
         }
@@ -180,13 +185,13 @@ public class GpslConverter implements IGpxConverter
         line = in.readLine();
         lineNum++;
         if(line == null) {
-            Utils.errMsg("Unexpected end of file at line " + lineNum + ":\n"
+            SWTUtils.errMsg("Unexpected end of file at line " + lineNum + ":\n"
                 + file.getName());
             return null;
         }
         tokens = line.split("=");
         if(tokens.length < 2 || !tokens[0].equals(GMTOFFSET)) {
-            Utils.warnMsg("No " + GMTOFFSET + " found at " + lineNum
+            SWTUtils.warnMsg("No " + GMTOFFSET + " found at " + lineNum
                 + ", assuming 0:\n" + file.getName());
             offset = "0";
         } else {
@@ -229,7 +234,7 @@ public class GpslConverter implements IGpxConverter
                 symbol = tokens[5];
                 wptType = new WptType();
                 if(wptType == null) {
-                    Utils.errMsg("Line " + lineNum
+                    SWTUtils.errMsg("Line " + lineNum
                         + ": Cannot create route waypoint:\n" + file.getName());
                     error = true;
                     break;
@@ -255,8 +260,8 @@ public class GpslConverter implements IGpxConverter
                 name = tokens[1];
                 rteType = new RteType();
                 if(rteType == null) {
-                    Utils.errMsg("Line " + lineNum + ": Cannot create route:\n"
-                        + file.getName());
+                    SWTUtils.errMsg("Line " + lineNum
+                        + ": Cannot create route:\n" + file.getName());
                     error = true;
                     break;
                 }
@@ -267,8 +272,8 @@ public class GpslConverter implements IGpxConverter
                 // Track
                 name = tokens[1];
                 if(name == null) {
-                    Utils.errMsg("Line " + lineNum + " Cannot create track:\n"
-                        + file.getName());
+                    SWTUtils.errMsg("Line " + lineNum
+                        + " Cannot create track:\n" + file.getName());
                     error = true;
                     break;
                 }
@@ -276,8 +281,8 @@ public class GpslConverter implements IGpxConverter
                 trkType.setName(name);
                 trkType.setDesc(name);
                 if(trkType == null) {
-                    Utils.errMsg("Line " + lineNum + ": Cannot create track:\n"
-                        + file.getName());
+                    SWTUtils.errMsg("Line " + lineNum
+                        + ": Cannot create track:\n" + file.getName());
                     error = true;
                     break;
                 }
@@ -286,8 +291,8 @@ public class GpslConverter implements IGpxConverter
             } else if(startChar.equals("T")) {
                 // TrackPoint
                 if(tokens.length < 6) {
-                    Utils.errMsg("Line " + lineNum + ": invalid trackpoint:\n"
-                        + file.getName());
+                    SWTUtils.errMsg("Line " + lineNum
+                        + ": invalid trackpoint:\n" + file.getName());
                     error = true;
                     break;
                 }
@@ -300,7 +305,7 @@ public class GpslConverter implements IGpxConverter
                 symbol = "";
                 wptType = new WptType();
                 if(wptType == null) {
-                    Utils.errMsg("Line " + lineNum
+                    SWTUtils.errMsg("Line " + lineNum
                         + ": Cannot create route waypoint:\n" + file.getName());
                     error = true;
                     break;
@@ -308,8 +313,8 @@ public class GpslConverter implements IGpxConverter
                 wptType.setLat(new BigDecimal(latitude));
                 wptType.setLon(new BigDecimal(longitude));
                 wptType.setEle(new BigDecimal(altitude));
-                XMLGregorianCalendar xgcal = getXMLGregorianCalendar(time,
-                    offset);
+                XMLGregorianCalendar xgcal = getXMLGregorianCalendarFromTimeStamp(
+                    time, offset);
                 if(xgcal != null) {
                     wptType.setTime(xgcal);
                 }
@@ -324,7 +329,7 @@ public class GpslConverter implements IGpxConverter
                         if(startSegment) {
                             trksegType = new TrksegType();
                             if(trksegType == null) {
-                                Utils.errMsg("Line " + lineNum
+                                SWTUtils.errMsg("Line " + lineNum
                                     + ": Cannot create track segment:\n"
                                     + file.getName());
                                 error = true;
@@ -333,38 +338,13 @@ public class GpslConverter implements IGpxConverter
                             trkType.getTrkseg().add(trksegType);
                         }
                     } else {
-                        Utils.errMsg("Line " + lineNum
+                        SWTUtils.errMsg("Line " + lineNum
                             + " Found trackpoint without track:\n"
                             + file.getName());
                     }
                     trksegType.getTrkpt().add(wptType);
                 }
             }
-            // // DEBUG
-            // if(false) {
-            // System.out.println(startChar);
-            // System.out.println("  name=" + name);
-            // System.out.println("  trkType=" + trkType);
-            // if(trkType != null) {
-            // System.out.println("    " + trkType.getTrkseg().size()
-            // + "  " + trkType.getName());
-            // } else {
-            // System.out.println("    null");
-            // }
-            // System.out.println("  trksegType=" + trksegType);
-            // if(trksegType != null) {
-            // System.out.println("    " + trksegType.getTrkpt().size());
-            // } else {
-            // System.out.println("    null");
-            // }
-            // System.out.println("  wptType=" + wptType);
-            // if(wptType != null) {
-            // System.out.println("    " + wptType.getName());
-            // } else {
-            // System.out.println("    null");
-            // }
-            // System.out.println();
-            // }
         }
         if(in != null) in.close();
         if(error) return null;
@@ -381,22 +361,201 @@ public class GpslConverter implements IGpxConverter
     @Override
     public void save(String creator, GpxType gpxType, File file)
         throws Throwable {
-        // TODO
-        // GPXParser.save(
-        // "GPX Inspector "
-        // + SWTUtils.getPluginVersion("net.kenevans.gpxinspector"),
-        // gpxType, file);
+        // Use this to avoid the possibility of mixed CF and CRLF
+        final String ls = SWTUtils.LS;
+        final String delimiter = "\t";
+        final SimpleDateFormat defaultFormatter = new SimpleDateFormat(
+            "MM/dd/yyyy HH:mm:ss");
+        String timeStamp;
+        double offset = 0;
+        String name;
+        double latitude;
+        double longitude;
+        double altitude;
+        String symbol;
+        String time;
+        GregorianCalendar gcal;
+        XMLGregorianCalendar xgcal;
+
+        // Assume the file is not null and any asking to overwrite has been done
+        // already
+        file.createNewFile();
+        BufferedReader in = null;
+        PrintWriter out = null;
+        try {
+            in = new BufferedReader(new FileReader(file));
+            out = new PrintWriter(new FileWriter(file));
+            // Get the offset to use. Only the GMT time is stored in the
+            // GpxType. We don't know the offset at the time the file was made.
+            // Further, we do not know the time zone. Each time time zone could
+            // have two offsets, depending on whether it is DST or not. There is
+            // the further complication that the file could have tracks made
+            // both under DST and not. (That one we cannot handle.) The
+            // procedure used is to find the time of the first trackpoint in the
+            // file, determine its offset in the current time zone, and use
+            // that. If there is no trackpoint, use the offset for the current
+            // time in the current time zone. Thus will tend to work as we want
+            // (have the time in the GPSL file be the clock time at the time of
+            // the tracks) if the user stays in one time zone and does not mix
+            // tracks with and without DST.
+            xgcal = null;
+            try {
+                // Try to find the first trackpoint
+                if(gpxType.getTrk().size() > 0) {
+                    for(TrkType trk : gpxType.getTrk()) {
+                        for(TrksegType seg : trk.getTrkseg()) {
+                            for(WptType wpt : seg.getTrkpt()) {
+                                xgcal = wpt.getTime();
+                                if(xgcal == null) {
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                }
+                if(xgcal != null) {
+                    // Use the time from the first trackpoint
+                    gcal = xgcal.toGregorianCalendar();
+                    // Get the date
+                    Date date = gcal.getTime();
+                    // Make a new local GregorianCalendar with this date
+                    gcal = new GregorianCalendar();
+                    gcal.setTime(date);
+                } else {
+                    // Make a new local GregorianCalendar with the current date
+                    gcal = new GregorianCalendar();
+                    gcal.setTime(new Date());
+                }
+                // Make a new local XMLGregorianCalendar
+                xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(
+                    gcal);
+                // Get its offset
+                offset = xgcal.getTimezone() / 60.;
+            } catch(Throwable t) {
+                // Do nothing, use 0
+            }
+
+            // Print header
+            out.print(GPSLINK_ID + ls);
+            timeStamp = Utils.timeStamp("MMM dd, yyyy hh:mm:ssa");
+            // Convert AM/PM
+            if(timeStamp.substring(21, 22).equalsIgnoreCase("P")) {
+                timeStamp = timeStamp.substring(0, 21) + "p";
+            } else {
+                timeStamp = timeStamp.substring(0, 21) + "a";
+            }
+            out.print("Saved " + timeStamp + ls);
+            out.print("Delimiter=" + delimiter + ls);
+            // This prints e.g. -5.0 instead of -5, but leave it
+            out.print("GMTOffset=" + offset + ls);
+
+            // Waypoints
+            if(gpxType.getWpt().size() > 0) {
+                out.print(ls + "Waypoints" + ls);
+                out.print(String.format("%s%s%s%s%s%s%s%s%s%s%s", "Type",
+                    delimiter, "Name", delimiter, "Latitude", delimiter,
+                    "Longitude", delimiter, "Alt", delimiter, "Symbol")
+                    + ls);
+                for(WptType wpt : gpxType.getWpt()) {
+                    name = wpt.getName();
+                    latitude = wpt.getLat().doubleValue();
+                    longitude = wpt.getLon().doubleValue();
+                    altitude = wpt.getEle().doubleValue() * M2FT;
+                    symbol = wpt.getSym();
+                    out.print(String.format("W%s%s%s%.6f%s%.6f%s%.0f%s%s",
+                        delimiter, name, delimiter, latitude, delimiter,
+                        longitude, delimiter, altitude, delimiter, symbol)
+                        + ls);
+                }
+            }
+
+            // Routes
+            if(gpxType.getRte().size() > 0) {
+                out.print(ls + "Routes" + ls);
+                out.print(String.format("%s%s%s%s%s%s%s%s%s%s%s", "Type",
+                    delimiter, "Name", delimiter, "Latitude", delimiter,
+                    "Longitude", delimiter, "Alt", delimiter, "Symbol")
+                    + ls);
+                for(RteType rte : gpxType.getRte()) {
+                    name = rte.getName();
+                    out.print(String.format("R%s%s", delimiter, name) + ls);
+                    for(WptType wpt : rte.getRtept()) {
+                        name = wpt.getName();
+                        latitude = wpt.getLat().doubleValue();
+                        longitude = wpt.getLon().doubleValue();
+                        altitude = wpt.getEle().doubleValue() * M2FT;
+                        symbol = wpt.getSym();
+                        out.print(String.format("W%s%s%s%.6f%s%.6f%s%.0f%s%s",
+                            delimiter, name, delimiter, latitude, delimiter,
+                            longitude, delimiter, altitude, delimiter, symbol)
+                            + ls);
+                    }
+                }
+            }
+
+            // Tracks
+            boolean first;
+            if(gpxType.getTrk().size() > 0) {
+                out.print(ls + "Tracks" + ls);
+                out.print(String.format("%s%s%s%s%s%s%s%s%s%s%s", "Type",
+                    delimiter, "Name", delimiter, "Latitude", delimiter,
+                    "Longitude", delimiter, "Alt", delimiter, "Time")
+                    + ls);
+                for(TrkType trk : gpxType.getTrk()) {
+                    name = trk.getName();
+                    out.print(String.format("H%s%s", delimiter, name) + ls);
+                    for(TrksegType seg : trk.getTrkseg()) {
+                        first = true;
+                        for(WptType wpt : seg.getTrkpt()) {
+                            if(first) {
+                                first = false;
+                                name = "Start";
+                            } else {
+                                name = "Cont";
+                            }
+                            latitude = wpt.getLat().doubleValue();
+                            longitude = wpt.getLon().doubleValue();
+                            altitude = wpt.getEle().doubleValue() * M2FT;
+                            symbol = wpt.getSym();
+                            xgcal = wpt.getTime();
+                            if(xgcal == null) {
+                                time = GARMINTIME0;
+                            } else {
+                                time = getTimeFromXMLGregorianCalendar(xgcal,
+                                    offset);
+                            }
+                            out.print(String.format(
+                                "T%s%s%s%.6f%s%.6f%s%.0f%s%s", delimiter, name,
+                                delimiter, latitude, delimiter, longitude,
+                                delimiter, altitude, delimiter, time)
+                                + ls);
+                        }
+                    }
+                }
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(in != null) in.close();
+                if(out != null) out.close();
+            } catch(IOException ex) {
+                ex.printStackTrace();
+                return;
+            }
+        }
     }
 
     /**
-     * Converts a GPSL time stamp to an XMLGregorianCalendar time. The GPSL time
-     * is UTC.
+     * Converts a GPSL file time stamp and offset to an XMLGregorianCalendar
+     * time.
      * 
      * @param time
+     * @param offset The String offset representing hours.
      * @return
      */
-    public static XMLGregorianCalendar getXMLGregorianCalendar(String time,
-        String offset) {
+    public static XMLGregorianCalendar getXMLGregorianCalendarFromTimeStamp(
+        String time, String offset) {
         if(time == null || time.equalsIgnoreCase(GARMINTIME0)
             || time.length() != 19) {
             return null;
@@ -413,14 +572,13 @@ public class GpslConverter implements IGpxConverter
             // Make a GregorianCalendar with the time
             GregorianCalendar gcal = new GregorianCalendar(
                 TimeZone.getTimeZone("GMT"));
-            gcal.set(year, month, date, hourOfDay, minute, second);
+            gcal.set(year, month - 1, date, hourOfDay, minute, second);
             // The time in the GPSL file is local time corresponding to the
             // offset at the top. We need to convert it to UTC time. Convert in
-            // seconds to allow fractional offsets used in some time zones.
-            int secOffset = 0;
+            // minutes to allow fractional offsets used in some time zones.
             try {
-                secOffset = -3600*Integer.parseInt(offset);
-                gcal.add(GregorianCalendar.SECOND, secOffset);
+                long minOffset = Math.round(-60. * Double.parseDouble(offset));
+                gcal.add(GregorianCalendar.MINUTE, (int)minOffset);
             } catch(NumberFormatException ex) {
                 // Do nothing
             }
@@ -430,5 +588,32 @@ public class GpslConverter implements IGpxConverter
         } catch(Throwable t) {
             return null;
         }
+    }
+
+    /**
+     * Converts a XMLGregorianCalendar and an offset to a GPSL trackpoint time
+     * string.
+     * 
+     * @param xgcal The XMLGregorianCalendar.
+     * @param offset The double offset in hours.
+     * @return
+     */
+    public static String getTimeFromXMLGregorianCalendar(
+        XMLGregorianCalendar xgcal, double offset) {
+        GregorianCalendar gcal = xgcal.toGregorianCalendar(
+            TimeZone.getTimeZone("GMT"), null, null);
+        gcal.add(GregorianCalendar.MINUTE, (int)Math.round(60. * offset));
+        // Don't use SimpleDateFormat("MM/dd/yyyy HH:mm:ss") It will format with
+        // the current time zone, Use the values for MONTH, etc. from the gcal.
+        // (Can't use the ones from the xgcal because they can't be
+        // incremented.)
+        String time = String.format("%02d/%02d/%04d %02d:%02d:%02d",
+            gcal.get(GregorianCalendar.MONTH) + 1,
+            gcal.get(GregorianCalendar.DAY_OF_MONTH),
+            gcal.get(GregorianCalendar.YEAR),
+            gcal.get(GregorianCalendar.HOUR_OF_DAY),
+            gcal.get(GregorianCalendar.MINUTE),
+            gcal.get(GregorianCalendar.SECOND));
+        return time;
     }
 }
