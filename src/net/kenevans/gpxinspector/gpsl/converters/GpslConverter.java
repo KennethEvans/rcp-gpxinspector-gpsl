@@ -7,7 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -364,8 +363,6 @@ public class GpslConverter implements IGpxConverter
         // Use this to avoid the possibility of mixed CF and CRLF
         final String ls = SWTUtils.LS;
         final String delimiter = "\t";
-        final SimpleDateFormat defaultFormatter = new SimpleDateFormat(
-            "MM/dd/yyyy HH:mm:ss");
         String timeStamp;
         double offset = 0;
         String name;
