@@ -5,5 +5,6 @@ Bundle-SymbolicName: net.kenevans.gpxinspector.gpsl;singleton:=true
 Bundle-Version: 1.0.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: net.kenevans.gpxinspector;bundle-version="1.0.0",
- net.kenevans.gpx;bundle-version="1.1.0"
+ net.kenevans.gpx;bundle-version="1.1.0",
+ net.kenevans.core.utils;bundle-version="1.0.0"
 Bundle-Vendor: kenevans.net

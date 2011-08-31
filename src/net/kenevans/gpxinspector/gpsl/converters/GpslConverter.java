@@ -14,14 +14,14 @@ import java.util.TimeZone;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import net.kenevans.core.utils.SWTUtils;
+import net.kenevans.core.utils.Utils;
 import net.kenevans.gpx.GpxType;
 import net.kenevans.gpx.RteType;
 import net.kenevans.gpx.TrkType;
 import net.kenevans.gpx.TrksegType;
 import net.kenevans.gpx.WptType;
 import net.kenevans.gpxinspector.converters.IGpxConverter;
-import net.kenevans.gpxinspector.utils.SWTUtils;
-import net.kenevans.gpxinspector.utils.Utils;
 import net.kenevans.parser.GPXParser;
 
 /*
