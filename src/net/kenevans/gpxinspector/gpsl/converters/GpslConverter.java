@@ -142,11 +142,13 @@ public class GpslConverter implements IGpxConverter
         if(line == null) {
             SWTUtils.errMsg("Unexpected end of file at line " + lineNum + ":\n"
                 + file.getName());
+            in.close();
             return null;
         }
         if(!line.equals(GPSLINK_ID)) {
             SWTUtils.errMsg("Invalid GPSLink file (Bad ID) at line " + lineNum
                 + ":\n" + file.getName());
+            in.close();
             return null;
         }
 
@@ -156,6 +158,7 @@ public class GpslConverter implements IGpxConverter
         if(line == null) {
             SWTUtils.errMsg("Unexpected end of file at line " + lineNum + ":\n"
                 + file.getName());
+            in.close();
             return null;
         }
 
@@ -165,6 +168,7 @@ public class GpslConverter implements IGpxConverter
         if(line == null) {
             SWTUtils.errMsg("Unexpected end of file at line " + lineNum + ":\n"
                 + file.getName());
+            in.close();
             return null;
         }
         tokens = line.split("=");
@@ -186,6 +190,7 @@ public class GpslConverter implements IGpxConverter
         if(line == null) {
             SWTUtils.errMsg("Unexpected end of file at line " + lineNum + ":\n"
                 + file.getName());
+            in.close();
             return null;
         }
         tokens = line.split("=");
