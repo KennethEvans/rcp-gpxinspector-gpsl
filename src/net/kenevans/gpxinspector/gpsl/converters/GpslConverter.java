@@ -21,8 +21,8 @@ import net.kenevans.gpxcombined.RteType;
 import net.kenevans.gpxcombined.TrkType;
 import net.kenevans.gpxcombined.TrksegType;
 import net.kenevans.gpxcombined.WptType;
+import net.kenevans.gpxcombined.parser.GPXParser;
 import net.kenevans.gpxinspector.converters.IGpxConverter;
-import net.kenevans.parser.GPXParser;
 
 /*
  * Created on May 12, 2011
