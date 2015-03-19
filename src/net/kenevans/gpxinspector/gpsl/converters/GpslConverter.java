@@ -16,12 +16,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import net.kenevans.core.utils.SWTUtils;
 import net.kenevans.core.utils.Utils;
-import net.kenevans.gpxcombined.GpxType;
-import net.kenevans.gpxcombined.RteType;
-import net.kenevans.gpxcombined.TrkType;
-import net.kenevans.gpxcombined.TrksegType;
-import net.kenevans.gpxcombined.WptType;
-import net.kenevans.gpxcombined.parser.GPXParser;
+import net.kenevans.gpxtrackpointextensionsv1.GpxType;
+import net.kenevans.gpxtrackpointextensionsv1.RteType;
+import net.kenevans.gpxtrackpointextensionsv1.TrkType;
+import net.kenevans.gpxtrackpointextensionsv1.TrksegType;
+import net.kenevans.gpxtrackpointextensionsv1.WptType;
+import net.kenevans.gpxtrackpointextensionsv1.parser.GPXParser;
 import net.kenevans.gpxinspector.converters.IGpxConverter;
 
 /*
