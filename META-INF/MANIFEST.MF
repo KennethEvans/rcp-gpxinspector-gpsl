@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GPSL Converter for GPX Inspector
-Bundle-SymbolicName: net.kenevans.gpxinspector.gpsl;singleton:=true
+Bundle-SymbolicName: net.kenevans.rcp.gpxinspector.gpsl;singleton:=true
 Bundle-Version: 1.0.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: net.kenevans.gpxinspector;bundle-version="1.0.0",
- net.kenevans.gpx;bundle-version="1.1.0",
- net.kenevans.core.utils;bundle-version="1.0.0"
+Require-Bundle: net.kenevans.rcp.gpxinspector;bundle-version="1.0.0",
+ net.kenevans.rcp.gpx;bundle-version="1.1.0",
+ net.kenevans.rcp.core.utils;bundle-version="1.0.0"
 Bundle-Vendor: kenevans.net

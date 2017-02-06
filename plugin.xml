@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="net.kenevans.gpxinspector.converters">
+         point="net.kenevans.rcp.gpxinspector.converters">
       <converter
             class="net.kenevans.gpxinspector.gpsl.converters.GpslConverter"
             id="net.kenevans.gpxinspector.gpslConverter"
